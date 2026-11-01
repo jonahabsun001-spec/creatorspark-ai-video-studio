@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10111c">
+<title>CreatorSpark AI Video Studio</title>
+<style>
+:root {
+  --bg:#10111c;
+  --panel:#191b2b;
+  --panel2:#22253a;
+  --text:#f5f5fb;
+  --muted:#a5a8bd;
+  --purple:#8667ff;
+  --border:#30334b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,Arial,sans-serif;line-height:1.5;
+}
+header{
+  padding:18px 6%;display:flex;justify-content:space-between;
+  align-items:center;border-bottom:1px solid var(--border);
+}
+.brand{font-size:21px;font-weight:800}
+.brand span{color:var(--purple)}
+.tag{color:#b9adff;font-size:12px}
+main{max-width:1100px;margin:40px auto;padding:0 20px}
+h1{font-size:clamp(28px,5vw,42px);margin:0 0 8px}
+.intro{color:var(--muted);margin-bottom:30px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.panel{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:16px;padding:22px;
+}
+h2{font-size:17px;margin:0 0 16px}
+label{display:block;font-size:13px;color:#c5c6d5;margin:16px 0 7px}
+input,select{
+  width:100%;padding:13px;border:1px solid var(--border);
+  background:var(--panel2);color:white;border-radius:9px;
+  font-size:14px;
+}
+input[type=file]{padding:12px}
+button{
+  border:0;border-radius:9px;padding:13px 17px;
+  cursor:pointer;font-weight:700;font-size:14px;
+}
+.primary{background:var(--purple);color:white;width:100%;margin-top:20px}
+.secondary{background:var(--panel2);color:white;border:1px solid var(--border)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.preview{
+  background:#080910;border-radius:12px;min-height:245px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;position:relative;
+}
+video{width:100%;max-height:360px;display:none}
+.placeholder{text-align:center;color:var(--muted);padding:25px}
+.placeholder strong{display:block;color:white;font-size:16px;margin-bottom:5px}
+.caption-sample{
+  position:absolute;bottom:22px;left:5%;right:5%;
+  text-align:center;font-weight:800;font-size:21px;
+  color:white;text-shadow:2px 2px 5px black;
+  pointer-events:none;
+}
+.animated{text-transform:uppercase;color:#ffe36b}
+.movie{font-weight:500;font-size:17px;text-transform:none}
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.style-option{
+  border:1px solid var(--border);border-radius:10px;
+  padding:12px;background:var(--panel2);cursor:pointer;
+}
+.style-option.active{border:2px solid var(--purple)}
+.style-preview{
+  background:#090a10;border-radius:7px;padding:22px 5px;
+  text-align:center;font-size:13px;margin-bottom:8px;
+}
+.small{font-size:12px;color:var(--muted)}
+.notice{
+  padding:13px;background:#292441;border:1px solid #514477;
+  color:#d8d0ff;border-radius:10px;font-size:13px;margin-top:17px;
+}
+.status{font-size:13px;color:var(--muted);margin-top:12px}
+footer{text-align:center;padding:30px;color:var(--muted);font-size:12px}
+@media(max-width:750px){
+  .layout{grid-template-columns:1fr}
+  main{margin-top:25px}
+  header{padding:15px 20px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">CreatorSpark<span> AI</span></div>
+  <div class="tag">VIDEO STUDIO</div>
+</header>
+
+<main>
+  <h1>Make every video understandable.</h1>
+  <p class="intro">
+    Generate multilingual subtitles and engaging captions for your videos.
+  </p>
+
+  <div class="layout">
+    <section class="panel">
+      <h2>1. Upload your video</h2>
+      <div class="preview">
+        <div class="placeholder" id="placeholder">
+          <strong>Choose a video to get started</strong>
+          Preview your video here.
+        </div>
+        <video id="video" controls playsinline></video>
+        <div class="caption-sample" id="captionSample" hidden>
+          YOUR CAPTIONS WILL APPEAR HERE
+        </div>
+      </div>
+
+      <label for="videoFile">Select video file</label>
+      <input type="file" id="videoFile" accept="video/*">
+      <p class="small" id="fileInfo">No video selected.</p>
+
+      <label for="sourceLanguage">Original spoken language</label>
+      <select id="sourceLanguage">
+        <option value="auto">Automatically detect language</option>
+        <option value="en">English</option>
+        <option value="yo">Yoruba</option>
+        <option value="ig">Igbo</option>
+        <option value="ha">Hausa</option>
+        <option value="fr">French</option>
+        <option value="es">Spanish</option>
+        <option value="pt">Portuguese</option>
+        <option value="ar">Arabic</option>
+      </select>
+
+      <label for="targetLanguage">Language for your captions</label>
+      <select id="targetLanguage">
+        <option value="en">English</option>
+        <option value="yo">Yoruba</option>
+        <option value="ig">Igbo</option>
+        <option value="ha">Hausa</option>
+        <option value="fr">French</option>
+        <option value="es">Spanish</option>
+        <option value="pt">Portuguese</option>
+        <option value="ar">Arabic</option>
+      </select>
+    </section>
+
+    <section class="panel">
+      <h2>2. Choose your caption style</h2>
+
+      <div class="style-grid">
+        <div class="style-option active" data-style="animated">
+          <div class="style-preview animated">THIS IS YOUR VIDEO!</div>
+          <strong>Animated captions</strong>
+          <div class="small">Social media style</div>
+        </div>
+        <div class="style-option" data-style="movie">
+          <div class="style-preview">This is your video.</div>
+          <strong>Movie subtitles</strong>
+          <div class="small">Clean and readable</div>
+        </div>
+      </div>
+
+      <label for="captionSize">Caption size</label>
+      <select id="captionSize">
+        <option value="17">Small</option>
+        <option value="21" selected>Medium</option>
+        <option value="27">Large</option>
+      </select>
+
+      <label for="captionColor">Caption colour</label>
+      <select id="captionColor">
+        <option value="#ffffff">White</option>
+        <option value="#ffe36b">Yellow</option>
+        <option value="#70e7ff">Blue</option>
+        <option value="#8cff9a">Green</option>
+      </select>
+
+      <button class="primary" id="generate" disabled>
+        Generate AI captions
+      </button>
+
+      <div class="notice">
+        <strong>Multilingual subtitle support</strong><br>
+        Select the original speech language and the language you want your subtitles translated into.
+      </div>
+
+      <p class="status" id="status">
+        Preview ready. AI processing will be connected in the next stage.
+      </p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  CreatorSpark AI Video Studio · Making video content accessible to everyone.
+</footer>
+
+<script>
+const fileInput = document.getElementById("videoFile");
+const video = document.getElementById("video");
+const placeholder = document.getElementById("placeholder");
+const fileInfo = document.getElementById("fileInfo");
+const sample = document.getElementById("captionSample");
+const generate = document.getElementById("generate");
+const statusText = document.getElementById("status");
+
+let videoUrl = null;
+let selectedStyle = "animated";
+
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("video/")) {
+    statusText.textContent = "Please select a valid video file.";
+    return;
+  }
+
+  if (videoUrl) URL.revokeObjectURL(videoUrl);
+
+  videoUrl = URL.createObjectURL(file);
+  video.src = videoUrl;
+  video.style.display = "block";
+  placeholder.style.display = "none";
+  fileInfo.textContent =
+    file.name + " · " + (file.size / (1024 * 1024)).toFixed(2) + " MB";
+
+  generate.disabled = false;
+  statusText.textContent = "Video loaded successfully.";
+});
+
+document.querySelectorAll(".style-option").forEach(option => {
+  option.addEventListener("click", () => {
+    document.querySelectorAll(".style-option").forEach(item =>
+      item.classList.remove("active")
+    );
+
+    option.classList.add("active");
+    selectedStyle = option.dataset.style;
+
+    sample.className = "caption-sample " + selectedStyle;
+  });
+});
+
+document.getElementById("captionSize").addEventListener("change", event => {
+  sample.style.fontSize = event.target.value + "px";
+});
+
+document.getElementById("captionColor").addEventListener("change", event => {
+  sample.style.color = event.target.value;
+});
+
+generate.addEventListener("click", () => {
+  statusText.textContent =
+    "Your video is ready. The AI transcription and translation engine is not connected yet. We will implement it in the next stage.";
+
+  sample.hidden = false;
+  sample.textContent = selectedStyle === "animated"
+    ? "YOUR CAPTIONS WILL APPEAR HERE"
+    : "Your subtitles will appear here.";
+});
+
+window.addEventListener("beforeunload", () => {
+  if (videoUrl) URL.revokeObjectURL(videoUrl);
+});
+</script>
+</body>
+</html>
