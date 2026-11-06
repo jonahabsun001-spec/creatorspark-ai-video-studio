@@ -73,19 +73,25 @@ export default async (request) => {
 
     const result = await response.json();
 
-    if (!response.ok) {
-      console.error("Gemini API error:", response.status);
+if (!response.ok) {
+  const details = await response.text();
 
-      return new Response(
-        JSON.stringify({
-          error:
-            response.status === 429
-              ? "The AI usage limit may have been reached. Try again later."
-              : "The AI service could not complete the request. Check the model and API access settings.",
-        }),
-        { status: response.status === 429 ? 429 : 502, headers }
-      );
+  console.error("Gemini API error:", response.status, details);
+
+  return new Response(
+    JSON.stringify({
+      error: "Gemini API request failed.",
+      status: response.status,
+      details: details
+    }),
+    {
+      status: 502,
+      headers: {
+        "Content-Type": "application/json"
+      }
     }
+  );
+}
 
     const text = (result.candidates?.[0]?.content?.parts || [])
       .map((part) => part.text || "")
