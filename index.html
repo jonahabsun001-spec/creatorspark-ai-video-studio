@@ -253,16 +253,49 @@ document.getElementById("captionColor").addEventListener("change", event => {
   sample.style.color = event.target.value;
 });
 
-generate.addEventListener("click", () => {
-  statusText.textContent =
-    "Your video is ready. The AI transcription and translation engine is not connected yet. We will implement it in the next stage.";
+generate.addEventListener("click", async () => {
+  const file = fileInput.files[0];
 
-  sample.hidden = false;
-  sample.textContent = selectedStyle === "animated"
-    ? "YOUR CAPTIONS WILL APPEAR HERE"
-    : "Your subtitles will appear here.";
+  if (!file) {
+    statusText.textContent = "Please select a video first.";
+    return;
+  }
+
+  generate.disabled = true;
+  statusText.textContent = "Testing the AI connection...";
+  sample.hidden = true;
+
+  try {
+    const response = await fetch("/.netlify/functions/gemini-test", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: "Reply with exactly this sentence: CreatorSpark AI connection successful."
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.error || "The AI connection test failed."
+      );
+    }
+
+    statusText.textContent =
+      "AI connection test successful. Next, we need to connect video transcription.";
+
+    sample.hidden = false;
+    sample.textContent = result.text;
+  } catch (error) {
+    statusText.textContent =
+      "AI connection failed: " + error.message;
+  } finally {
+    generate.disabled = false;
+  }
 });
-
 window.addEventListener("beforeunload", () => {
   if (videoUrl) URL.revokeObjectURL(videoUrl);
 });
